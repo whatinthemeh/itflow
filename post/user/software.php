@@ -66,7 +66,7 @@ if (isset($_POST['add_software'])) {
         $expire = "'" . $expire . "'";
     }
     $notes = sanitizeInput($_POST['notes']);
-    $vendor = sanitizeInput($_POST['vendor'] ?? 0);
+    $vendor = intval($_POST['vendor'] ?? 0);
 
     mysqli_query($mysqli,"INSERT INTO software SET software_name = '$name', software_version = '$version', software_description = '$description', software_type = '$type', software_key = '$key', software_license_type = '$license_type', software_seats = $seats, software_purchase_reference = '$purchase_reference', software_purchase = $purchase, software_expire = $expire, software_notes = '$notes', software_vendor_id = $vendor, software_client_id = $client_id");
 
@@ -127,7 +127,7 @@ if (isset($_POST['edit_software'])) {
         $expire = "'" . $expire . "'";
     }
     $notes = sanitizeInput($_POST['notes']);
-    $vendor = sanitizeInput($_POST['vendor'] ?? 0);
+    $vendor = intval($_POST['vendor'] ?? 0);
 
     mysqli_query($mysqli,"UPDATE software SET software_name = '$name', software_version = '$version', software_description = '$description', software_type = '$type', software_key = '$key', software_license_type = '$license_type', software_seats = $seats, software_purchase_reference = '$purchase_reference', software_purchase = $purchase, software_expire = $expire, software_notes = '$notes', software_vendor_id = $vendor WHERE software_id = $software_id");
 
@@ -200,10 +200,6 @@ if (isset($_GET['delete_software'])) {
     $client_id = intval($row['software_client_id']);
 
     mysqli_query($mysqli,"DELETE FROM software WHERE software_id = $software_id");
-
-    // Remove Software Relations
-    mysqli_query($mysqli,"DELETE FROM software_contacts WHERE software_id = $software_id");
-    mysqli_query($mysqli,"DELETE FROM software_assets WHERE software_id = $software_id");
 
     //Logging
     logAction("Software", "Delete", "$session_name deleted software $software_name and removed all device/user license associations", $client_id);
